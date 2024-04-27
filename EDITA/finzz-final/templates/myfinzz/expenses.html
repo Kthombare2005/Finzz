@@ -1,0 +1,144 @@
+{% include 'myfinzz/header.html' %}
+<main class="p-5">
+  <div class="container-fluid">
+    <h1>Manage Expenses</h1>
+    <div class="row">
+      <div class="col-sm-12">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="home-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#home"
+              type="button"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+            >
+              Expenses
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="profile-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#profile"
+              type="button"
+              role="tab"
+              aria-controls="profile"
+              aria-selected="false"
+            >
+              Expense Categories
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="contact-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#contact"
+              type="button"
+              role="tab"
+              aria-controls="contact"
+              aria-selected="false"
+            >
+              Contact
+            </button>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div
+            class="tab-pane fade show active"
+            id="home"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
+            <div class="row">
+              <div class="col-sm-12 p-5">
+                <div class="chat-box">
+                  <div class="chat-pane">
+                    <!-- <div class="message sent">Sent Message 1</div>
+                    <div class="message sent">Sent Message 2</div>
+                    <div class="message received">Received Message 1</div>
+                    <div class="message received">Received Message 2</div> -->
+                  </div>
+                  <div class="input-box">
+                    <input
+                      type="text"
+                      placeholder="Type your message here..."
+                    />
+                    <button>Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="tab-pane fade"
+            id="profile"
+            role="tabpanel"
+            aria-labelledby="profile-tab"
+          >
+            ...
+          </div>
+          <div
+            class="tab-pane fade"
+            id="contact"
+            role="tabpanel"
+            aria-labelledby="contact-tab"
+          >
+            ...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Function to handle sending a message
+    function sendMessage() {
+      var message = $(".input-box input").val(); // Get the message from the input box
+      if (message.trim() !== "") {
+        // Check if the message is not empty
+        // Append the sent message to the chat pane
+        $(".chat-pane").append(
+          '<div class="message sent">' + message + "</div>"
+        );
+        // Clear the input box
+        $(".input-box input").val("");
+        // Scroll to the bottom of the chat pane
+        $(".chat-pane").scrollTop($(".chat-pane")[0].scrollHeight);
+      }
+    }
+
+    // Event listener for the "Send" button
+    $(".input-box button").click(function (e) {
+      e.preventDefault(); // Prevent the default form submission behavior
+      sendMessage(); // Call the sendMessage function
+    });
+
+    // Event listener for pressing Enter in the input box
+    $(".input-box input").keypress(function (e) {
+      if (e.which === 13) {
+        // Check if Enter key is pressed
+        sendMessage(); // Call the sendMessage function
+      }
+    });
+
+    var socket = io();
+
+    socket.on("message", function (message) {
+      // Append the received message to the chat pane
+      $(".chat-pane").append(
+        '<div class="message received">' + message + "</div>"
+      );
+    });
+  });
+</script>
+{% include 'myfinzz/footer.html' %}
