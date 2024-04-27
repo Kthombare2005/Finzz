@@ -1,0 +1,103 @@
+.sidenav {
+    width: 15%;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    z-index: 0;
+    box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
+    height: 100%;
+  }
+  main {
+    margin-left: 15%;
+  }
+  .taiba {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    z-index: 9999;
+    height: 100px;
+    animation: heartbeat 1s infinite;
+  }
+  @keyframes heartbeat {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .centered-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; /* Center the text horizontally */
+    display: none;
+  }
+  .chat-box {
+    display: flex;
+    flex-direction: column;
+    height: 300px; /* Adjust the height as needed */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .chat-pane {
+    flex: 4; /* 80% of the height */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    padding: 10px;
+  }
+  
+  .message {
+    max-width: 50%; /* Limit the width of the message bubbles */
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    width: auto;
+  }
+  
+  .message.sent {
+    align-self: flex-end; /* Align sent messages to the right */
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .message.received {
+    align-self: flex-start; /* Align received messages to the left */
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .message:nth-child(even) {
+    align-self: flex-end; /* Align even-numbered messages to the right */
+  }
+  
+  .message:nth-child(odd) {
+    align-self: flex-start; /* Align odd-numbered messages to the left */
+  }
+  
+  .input-box {
+    flex: 1; /* 20% of the height */
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .input-box input {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .input-box button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
