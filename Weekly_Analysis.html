@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Weekly Expenditure Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* Light gray background color */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+
+        .chat-container {
+            position: relative;
+            width: 400px; /* Set fixed width for the chat container */
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #ffffff; /* White background color */
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+            display: flex;
+            flex-direction: column;
+            width: 40vw;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: scroll;
+            width: 30vw;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+        }
+
+        .chat-box::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            margin-left: 10px;
+            display: none; /* Hide input fields by default */
+        }
+
+        button {
+            width: 120px;
+            padding: 12px;
+            background-color: #007bff; /* Blue send button */
+            color: #ffffff; /* White text color */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker shade of blue on hover */
+        }
+
+        .message {
+            margin-bottom: 20px;
+            width: fit-content; /* Set the width based on content */
+        }
+
+        .user-message {
+            align-self: flex-end; /* Align user messages to the right */
+            background-color: #DCF8C6; /* Light green background color for user messages */
+            padding: 15px;
+            border-radius: 20px;
+            margin-left: auto; /* Push user messages to the right */
+        }
+
+        .bot-message {
+            align-self: flex-start; /* Align bot messages to the left */
+            background-color: #f0f0f0; /* Light gray background color for bot messages */
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        .expenditure-list {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .expenditure-list label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer; /* Add pointer cursor to make labels clickable */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container" id="chat-container">
+            <div class="chat-box" id="chat-box"></div>
+            <button class="up-arrow" onclick="scrollToTop()"><i class="fa-solid fa-chevron-up"></i></button>
+            <div class="input-container">
+                <button onclick="submitExpenditures()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to display a message in the chat box
+        function addMessage(message, sender) {
+            var chatBox = document.getElementById("chat-box");
+            var newMessage = document.createElement("div");
+            newMessage.classList.add("message");
+
+            if (sender === "user") {
+                message = "User: " + message;
+                newMessage.classList.add("user-message");
+            } else if (sender === "bot") {
+                message = "Bot: " + message;
+                newMessage.classList.add("bot-message");
+            }
+
+            newMessage.innerHTML = message; // Use innerHTML to render HTML content
+            chatBox.appendChild(newMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to handle user input
+        function handleUserInput(event) {
+            if (event.key === "Enter") {
+                var userInput = document.getElementById("user-input").value;
+                sendMessage(userInput);
+                document.getElementById("user-input").value = "";
+            }
+        }
+
+        // Function to send user message
+        function sendMessage(message) {
+            // Display user message in chat box
+            addMessage(message, "user");
+        }
+
+        // Function to submit selected expenditures
+        function submitExpenditures() {
+            var selectedExpenditures = []; // Array to store selected expenditures
+            var expenditureCosts = {}; // Object to store costs for selected expenditures
+
+            // Get all checked checkboxes
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+            // Iterate over checked checkboxes and push their values to selectedExpenditures array
+            checkboxes.forEach(function(checkbox) {
+                var expenditureName = checkbox.value;
+                var costInput = document.getElementById(expenditureName + "-cost"); // Get input field for cost
+                var cost = parseFloat(costInput.value); // Get cost from input field
+                if (!isNaN(cost) && cost >= 0) {
+                    selectedExpenditures.push(expenditureName);
+                    expenditureCosts[expenditureName] = cost; // Store cost for the selected expenditure
+                }
+            });
+
+            // Display selected expenditures and their costs in chat box
+            if (selectedExpenditures.length > 0) {
+                var message = "You selected the following expenditures:";
+                selectedExpenditures.forEach(function(expenditureName) {
+                    message += "\n- " + expenditureName + ": ₹" + expenditureCosts[expenditureName];
+                });
+                addMessage(message, "user");
+                // Additional logic to process the selected expenditures can be added here
+            } else {
+                addMessage("Please select at least one expenditure and enter its cost.", "bot");
+            }
+        }
+
+        // Welcome message with a delay of 1 second
+        setTimeout(function() {
+            addMessage("Welcome to the Weekly Expenditure Analyzer!", "bot");
+        }, 1000);
+
+        // Delay before showing the next message
+        setTimeout(function() {
+            // Second message with a delay of 3 seconds
+            addMessage("Let's now analyze your weekly expenditures.", "bot");
+        }, 3000);
+
+        // Delay before displaying the list of expenditures
+        setTimeout(function() {
+            // Third message with a delay of 5 seconds
+            displayExpenditureList();
+        }, 5000);
+
+        // Function to display the list of expenditures
+        function displayExpenditureList() {
+            var expenditureList = "<div class='expenditure-list'>" +
+                "<label><input type='checkbox' value='Petrol' onclick='toggleInput(this)'>Petrol<input type='number' id='Petrol-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Groceries' onclick='toggleInput(this)'>Groceries<input type='number' id='Groceries-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Toiletries' onclick='toggleInput(this)'>Toiletries<input type='number' id='Toiletries-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Vehicle Maintenance' onclick='toggleInput(this)'>Vehicle Maintenance<input type='number' id='Vehicle-Maintenance-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Public Transport' onclick='toggleInput(this)'>Public Transport<input type='number' id='Public-Transport-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Dining Out' onclick='toggleInput(this)'>Dining Out<input type='number' id='Dining-Out-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Vegetables' onclick='toggleInput(this)'>Vegetables<input type='number' id='Vegetables-cost' min='0'></label>" +
+                "<label><input type='checkbox' value='Fruits' onclick='toggleInput(this)'>Fruits<input type='number' id='Fruits-cost' min='0'></label>" +
+                "</div>";
+
+            addMessage(expenditureList, "bot");
+        }
+
+        // Function to toggle input box based on checkbox state
+        function toggleInput(checkbox) {
+            var costInput = document.getElementById(checkbox.value + "-cost");
+            costInput.style.display = checkbox.checked ? "inline-block" : "none";
+        }
+
+        // Function to scroll to the top of the chat box
+        function scrollToTop() {
+            var chatBox = document.getElementById("chat-box");
+            chatBox.scrollTop = 0;
+        }
+    </script>
+</body>
+</html>
