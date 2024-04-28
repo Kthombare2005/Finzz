@@ -1297,3 +1297,19 @@ left: 26%;
 }
 /*--//responsive--*/
 /*-- //to-top --*/
+
+#review{
+    background-color: #ffffff;
+    width: 300px ;
+    height: 100px;
+    text-align: start;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    word-wrap: break-word;
+
+
+
+
+}
