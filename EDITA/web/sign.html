@@ -20,9 +20,22 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             padding: 40px;
-            width: 400px;
+            width: fit-content;
             max-width: 90%;
             text-align: center;
+            display: flex;
+        }
+        .form{
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 380px;
+            max-width: 90%;
+            text-align: center;
+            margin-right: 10px;
+            margin-top: 90px;
+            height: fit-content;
         }
         h1 {
             color: #333;
@@ -75,6 +88,7 @@
 </head>
 <body>
     <div class="container">
+        <div id="form">
         <h1>Sign Up</h1>
         <form action="/signup" method="post" id="myform">
             <input type="text" id="username" name="username" placeholder="Username" required><br>
@@ -85,7 +99,8 @@
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required><br><br>
             <a href="./login.html" class="i">SignUp</a><!--<button class="i" type="submit">Sign Up</button>-->
         </form>
-        <p class="login">Already have an account? <a href="login.html">Sign up here</a>.</p>
+        <p class="login">Already have an account? <a href="login.html">login here</a>.</p></div>
+        <img src="./images/Finance-PNG-Pic-HQ.png" alt="">
     </div>
    <script>
          function log_in(){
