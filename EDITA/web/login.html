@@ -11,19 +11,35 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: start;
             align-items: center;
             height: 100vh;
+            float: left;
         }
         .container {
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             padding: 40px;
-            width: 400px;
+            width: fit-content;
             max-width: 90%;
             text-align: center;
+            display: flex;
         }
+        .form{
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 380px;
+            max-width: 90%;
+            text-align: center;
+            margin-right: 10px;
+            margin-top: 90px;
+            height: fit-content;
+        }
+
         h1 {
             color: #333;
         }
@@ -72,13 +88,16 @@
 </head>
 <body>
     <div class="container">
+        <div class="form">
         <h1>Login</h1>
         <form action="/login" method="post">
             <input type="text" id="username_email" name="username_email" placeholder="Username/Email" required><br>
             <input type="password" id="password" name="password" placeholder="Password" required><br><br>
             <a href="./Dashboard.html" class="i">Login</a>
         </form>
-        <p class="signup">Don't have an account? <a href="./sign.html">Sign up here</a>.</p>
+        <p class="signup">Don't have an account? <a href="./sign.html">Sign up here</a>.</p></div>
+    
+        <img src="./images/Finance-PNG-Pic-HQ.png" >
     </div>
 </body>
 </html>
