@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Saving Analyzer</title>
+    <style>
+ body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5; /* Light gray background color */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+
+        .chat-container {
+            position: relative;
+            width: 400px; /* Set fixed width for the chat container */
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #ffffff; /* White background color */
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+            display: flex;
+            flex-direction: column;
+            width: 40vw;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: scroll;
+            width: 30vw;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+        }
+
+        .chat-box::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+        }
+
+        input[type="text"] {
+            width: calc(100% - 80px); /* Adjusted width for input field */
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            margin: 10px;
+            outline: none; /* Remove outline on focus */
+        }
+
+        button {
+            width: 60px;
+            padding: 12px;
+            background-color: #007bff; /* Blue send button */
+            color: #ffffff; /* White text color */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker shade of blue on hover */
+        }
+
+        .message {
+            margin-bottom: 20px;
+            width: fit-content; /* Set the width based on content */
+        }
+
+        .user-message {
+            align-self: flex-end; /* Align user messages to the right */
+            background-color: #DCF8C6; /* Light green background color for user messages */
+            padding: 15px;
+            border-radius: 20px;
+            margin-left: auto; /* Push user messages to the right */
+        }
+
+        .bot-message {
+            align-self: flex-start; /* Align bot messages to the left */
+            background-color: #f0f0f0; /* Light gray background color for bot messages */
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        .input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Add space between items */
+    width: 100%; /* Set width to 100% */
+    position: relative; /* Set position to relative */
+}
+
+.input-container input[type="text"] {
+    flex: 1; /* Allow input field to grow */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-right: 10px; /* Add some spacing between input and button */
+    outline: none;
+}
+
+.input-container button {
+    padding: 12px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.input-container button:hover {
+    background-color: #0056b3;
+}
+
+.input-container i {
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.up-arrow {
+    width: 40px;
+    height: 40px;
+    background-color: transparent; /* Transparent background */
+    color: #007bff; /* Blue color */
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    position: absolute;
+    top: calc(100% + 10px); /* Position just above the text box */
+    right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.up-arrow:hover {
+    color: #0056b3; /* Darker shade of blue on hover */
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container" id="chat-container">
+            <div class="chat-box" id="chat-box"></div>
+            <button class="up-arrow" onclick="scrollToTop()"><i class="fa-solid fa-chevron-up"></i></button>
+            <div class="input-container">
+                <input type="text" id="user-input" placeholder="Type your message...">
+                <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+      document.getElementById("user-input").addEventListener("keypress", handleUserInput);
+// Global variable to track the conversation state
+var conversationState = "askMonth"; // Initialize conversation state
+
+// Variables to store user's information
+var userSalary = 0;
+var expenditures = []; // Array to store expenditures
+var numExpenditures = 0; // Variable to store the total number of expenditures
+
+// Function to handle user input
+function handleUserInput(event) {
+    if (event.key === "Enter") {
+        var userInput = document.getElementById("user-input").value;
+        if (conversationState === "askMonth") {
+            processMonth(userInput);
+        } else if (conversationState === "askSalary") {
+            processSalary(userInput);
+        } else if (conversationState === "askTotalExpenditures") {
+            processTotalExpenditures(userInput);
+        } else if (conversationState === "askForExpenditureName") {
+            processExpenditureName(userInput);
+        } else if (conversationState === "askForExpenditureCost") {
+            processExpenditureCost(userInput);
+        }
+        document.getElementById("user-input").value = ""; // Clear input field
+    }
+}
+
+// Function to add a message to the chat box
+function addMessage(message, sender) {
+    var chatBox = document.getElementById("chat-box");
+    var newMessage = document.createElement("div");
+    newMessage.classList.add("message");
+
+    if (sender === "user") {
+        message = "User: " + message;
+        newMessage.classList.add("user-message");
+    } else if (sender === "bot") {
+        message = "Fin: " + message;
+        newMessage.classList.add("bot-message");
+    }
+
+    newMessage.textContent = message;
+    chatBox.appendChild(newMessage);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Ask the user for the month
+function askForMonth() {
+    addMessage("For which month do you want to calculate the saving?", "bot");
+}
+
+// Process the user's response for the month
+function processMonth(month) {
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var userInput = month.trim().toLowerCase(); // Convert user input to lowercase and remove leading/trailing spaces
+    var matchedMonth = months.find(m => m.toLowerCase() === userInput);
+    if (matchedMonth) {
+        addMessage(month, "user");
+        askForSalary(); // Ask for salary after receiving the month input
+        conversationState = "askSalary"; // Update conversation state
+    } else {
+        addMessage("Invalid month. Please enter a month from January to December.", "bot");
+        askForMonth(); // Ask again for the month
+    }
+}
+
+// Ask the user for the salary
+function askForSalary() {
+    addMessage("What is your monthly salary (in rupees)?", "bot");
+}
+
+// Process the user's response for the salary
+function processSalary(salary) {
+    if (!isNaN(salary)) {
+        userSalary = parseInt(salary);
+        addMessage("Your monthly salary is ₹" + salary, "user");
+        askForTotalExpenditures(); // Ask for the total number of expenditures after receiving the salary input
+        conversationState = "askTotalExpenditures"; // Update conversation state
+    } else {
+        addMessage("Please enter a valid salary amount in rupees.", "bot");
+        askForSalary(); // Ask again for the salary
+    }
+}
+
+// Ask the user for the total number of expenditures
+function askForTotalExpenditures() {
+    addMessage("How many expenditures do you have this month?", "bot");
+}
+
+// Process the user's response for the total number of expenditures
+function processTotalExpenditures(totalExpenditures) {
+    if (!isNaN(totalExpenditures) && parseInt(totalExpenditures) >= 0) {
+        numExpenditures = parseInt(totalExpenditures); // Store the total number of expenditures
+        addMessage("You have " + numExpenditures + " expenditures this month.", "user");
+        conversationState = "askForExpenditureName"; // Update conversation state to start asking for expenditure names
+        askForExpenditureName(1); // Start asking for the name of the first expenditure
+    } else {
+        addMessage("Please enter a valid number of expenditures.", "bot");
+        askForTotalExpenditures(); // Ask again for the total number of expenditures
+    }
+}
+
+// Function to ask the user for the name of the nth expenditure
+function askForExpenditureName(n) {
+    addMessage("Enter the name of expenditure " + n + ":", "bot");
+}
+
+// Process the user's response for the name of the nth expenditure
+function processExpenditureName(expenditureName) {
+    expenditures.push({ name: expenditureName });
+    addMessage(expenditureName, "user");
+    conversationState = "askForExpenditureCost"; // Update conversation state
+    askForExpenditureCost(expenditures.length - 1); // Ask for the cost of the nth expenditure
+}
+
+// Function to ask the user for the cost of the nth expenditure
+function askForExpenditureCost(n) {
+    addMessage("How much did you spend on " + expenditures[n].name + "?", "bot");
+}
+
+// Process the user's response for the cost of the nth expenditure
+function processExpenditureCost(expenditureCost) {
+    var cost = parseFloat(expenditureCost);
+    if (!isNaN(cost) && cost >= 0) {
+        expenditures[expenditures.length - 1].cost = cost; // Update the cost for the last expenditure
+        addMessage("You spent ₹" + cost + " on " + expenditures[expenditures.length - 1].name, "user");
+        if (expenditures.length < numExpenditures) {
+            askForExpenditureName(expenditures.length + 1); // Ask for the name of the next expenditure
+            conversationState = "askForExpenditureName"; // Update conversation state
+        } else {
+            // Calculate and display the total expenditure
+            var totalExpenditure = 0;
+            expenditures.forEach(expenditure => {
+                totalExpenditure += expenditure.cost;
+            });
+            if (totalExpenditure > userSalary) {
+                addMessage("Insufficient balance! You spent more than your salary this month.", "bot");
+            } else {
+                var remainingBalance = userSalary - totalExpenditure;
+                addMessage("You spent ₹" + totalExpenditure + " this month on the expenditures", "bot");
+                addMessage("Your This Month Saving is : ₹" + remainingBalance, "bot");
+            }
+        }
+    } else {
+        addMessage("Please enter a valid amount for expenditure " + expenditures.length, "bot");
+        conversationState = "askForExpenditureCost"; // Update conversation state
+    }
+}
+
+window.onload = function() {
+    // Welcome message with a delay of 0 seconds
+    setTimeout(function() {
+        addMessage("Welcome to Saving Analyzer!", "bot");
+    }, 0);
+
+    // Delay before showing the next message
+    setTimeout(function() {
+        // Second message with a delay of 5 seconds
+        addMessage("I am Your Personal Finance Manager", "bot");
+    }, 300);
+
+    // Delay before showing the next message
+    setTimeout(function() {
+        // Third message with a delay of 5 seconds after the second message
+        addMessage("Please provide some information for calculating the saving", "bot");
+    }, 900);
+
+    // Delay before starting the conversation
+    setTimeout(function() {
+        // Start the conversation by asking for the month after a total delay of 15 seconds
+        askForMonth();
+    }, 1200);
+};
+// Function to save saving data to the server
+function saveSavingData(savingData) {
+    fetch('/save_saving_data', {
+        method: 'POST',
+        body: JSON.stringify({ saving_data: savingData }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Saving data saved successfully');
+        } else {
+            console.error('Failed to save saving data');
+        }
+    })  
+    .catch(error => {   
+        console.error('Error:', error);
+    });
+}
+
+// Function to calculate and save saving data
+function saveSavingData() {
+    // Calculate saving data...
+    var savingData = '...'; // Example saving data
+    addMessage("Your This Month Saving is : ₹" + remainingBalance, "bot");
+    saveSavingData(savingData); // Save saving data to the server
+}
+
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Create a MySQL connection pool
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: 'localhost',
+    user: 'root',
+    password: 'Ketan@2005',
+    database: 'finzz' // Change the database name to finzz
+});
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Route to save saving data
+app.post('/save_saving_data', (req, res) => {
+    const savingData = req.body;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error getting MySQL connection:', err);
+            return res.status(500).json({ error: 'Failed to save data' });
+        }
+        
+        // Insert saving data into the database
+        connection.query('INSERT INTO savings SET ?', savingData, (err, result) => {
+            connection.release(); // Release the connection
+            if (err) {
+                console.error('Error saving data to MySQL:', err);
+                return res.status(500).json({ error: 'Failed to save data' });
+            }
+            res.status(200).json({ message: 'Saving data saved successfully' });
+        });
+    });
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(Server is running on port ${PORT});
+});
+
+
+
+
+</script>
+</body>
+</html>
