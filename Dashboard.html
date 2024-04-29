@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finzz - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet" type="text/css" media="all">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            overflow: hidden; /* Hide both horizontal and vertical scroll bars */
+            position: relative; /* Required for absolute positioning */
+            margin-bottom: 100px; /* Make space for the microphone icon at the bottom */
+        }
+        .sidenav {
+            position: fixed;
+            top: 10%;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #f8f9fa;
+            padding-top: 60px;
+            overflow-x: hidden;
+        }
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #000;
+            display: block;
+            transition: 0.3s;
+        }
+        .sidenav a:hover {
+            background-color: #ddd;
+        }
+        .taiba {
+            position: fixed;
+            top: 90vh;
+            right: 0;
+            z-index: -1;
+            width: 5vw; 
+            height: 10vh;
+        }
+        .p-5 {
+            margin-left: 250px;
+            padding: 50px;
+        }
+        .border-primary {
+            border-color: #0d6efd !important;
+        }
+        .mic-icon {
+            position: fixed;
+            bottom: 20px; /* Adjust bottom position */
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            background-color: transparent;
+            border-radius: 50%;
+            width: 32px; /* Adjust circle size */
+            height: 32px; /* Adjust circle size */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            border: 2px solid #000;
+        }
+        .mic-icon.active {
+            background-color: rgb(35, 248, 35); /* Green color for active state */
+        }
+        .mic-icon i {
+            font-size: 20px;
+            color: #000;
+        }
+
+        #Logo{
+            font-weight: 800;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" id="Logo"><strong>F</strong>inzz</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!--<div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a id="homeButton" class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>-->
+        </div>
+    </nav>
+
+    <aside class="sidenav">
+        <a href="#" id="homeLink" class="d-block mb-3 text-dark ps-5 text-decoration-none" previewlistener="true">
+            <i class="d-inline-block pe-3 fa fa-home"></i> Home
+        </a>
+        <a href="/saving.html" class="d-block mb-3 text-dark ps-5 text-decoration-none">
+          <i class="d-inline-block pe-3 fa fa-chart-line"></i> Saving Analyzer
+        </a>
+        
+        <a href="/goal.html" class="d-block mb-3 text-dark ps-5 text-decoration-none" previewlistener="true">
+            <i class="d-inline-block pe-3 fa fa-chart-line"></i> Goal Achiever
+        </a>
+        <a href="/Graph.html" class="d-block mb-3 text-dark ps-5 text-decoration-none" previewlistener="true">
+            <i class="d-inline-block pe-3 fa fa-file-alt"></i> Overall Recap
+        </a>
+        <a href="#" class="d-block mb-3 text-dark ps-5 text-decoration-none" previewlistener="true">
+            <i class="d-inline-block pe-3 fa fa-sign-out-alt"></i> Logout
+        </a>
+    </aside>
+
+    <!--<img src="images/finzztoon.png" class="taiba" alt="">-->
+
+    <main class="p-5">
+        <div class="container-fluid">
+            <h1>Dashboard</h1>
+            <!--<h3>Welcome </h3>-->
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-4">
+                    <div class="card border border-2 shadow rounded-3 border-primary">
+                        <div class="card-body">
+                            <h1>50</h1>
+                            <span class="d-block">expense categories</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4">
+                    <div class="card border border-2 shadow rounded-3 border-primary">
+                        <div class="card-body">
+                            <h1>50</h1>
+                            <span class="d-block">expense categories</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4">
+                    <div class="card border border-2 shadow rounded-3 border-primary">
+                        <div class="card-body">
+                            <h1>50</h1>
+                            <span class="d-block">expense categories</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="micButton" class="mic-icon"><i class="fas fa-microphone"></i></div>
+
+    <!-- Command card -->
+    <div id="commandCard" class="position-fixed top-50 start-50 translate-middle" style="display: none;">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Voice Commands</h5>
+                <p class="card-text">List of available voice commands:</p>
+                <!-- Add your voice commands here -->
+                <ul>
+                    <li>Say "show commands" to see this list again.</li>
+                    <li>Add more commands as needed...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+
+        
+        function speakWelcomeMessage() {
+            var synth = window.speechSynthesis;
+            var utterance = new SpeechSynthesisUtterance('Welcome to Finzz. I am Fin your personal AI finance assistant.');
+            synth.speak(utterance);
+
+            // Add active class to mic icon during the welcome message
+            //document.getElementById('micButton').classList.add('active');
+
+            // Remove active class from mic icon after the welcome message ends
+           /* utterance.onend = function() {
+                document.getElementById('micButton').classList.remove('active');
+                // Ask for microphone permission after the welcome message ends
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function(stream) {
+                        console.log('Microphone permission granted!');
+                        // Start voice recognition
+                        startVoiceRecognition();
+                    })
+                    .catch(function(err) {
+                        console.error('Error accessing microphone:', err);
+                    });
+            };*/
+        }
+
+        // When the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Speak the welcome message
+            speakWelcomeMessage();
+        });
+
+        // Microphone icon click event
+        /*document.getElementById('micButton').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        // Function to start voice recognition
+        function startVoiceRecognition() {
+            const recognition = new SpeechRecognition(); // Initialize speech recognition object
+            recognition.continuous = true; // Keep listening for speech
+            recognition.lang = 'en-US'; // Set language to English
+            recognition.onresult = function(event) {
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        const transcript = event.results[i][0].transcript.trim(); // Get the recognized speech
+                        console.log('User said:', transcript);
+                        if (transcript === 'show commands') {
+                            // Show the command card
+                            document.getElementById('commandCard').style.display = 'block';
+                        }
+                    }
+                }
+            };
+            recognition.start(); // Start speech recognition
+        }*/
+        
+    </script>
+</body>
+</html>
