@@ -162,8 +162,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.botpress.cloud/webchat/v1/inject.js"></script>
-    <script src="https://mediafiles.botpress.cloud/f4ddddec-d6cd-4260-b756-9b34504ea80a/webchat/config.js" d
+    
     <script>
       document.getElementById("user-input").addEventListener("keypress", handleUserInput);
 // Global variable to track the conversation state
@@ -307,13 +306,6 @@ function processExpenditureCost(expenditureCost) {
                 var remainingBalance = userSalary - totalExpenditure;
                 addMessage("You spent ₹" + totalExpenditure + " this month on the expenditures", "bot");
                 addMessage("Your This Month Saving is : ₹" + remainingBalance, "bot");
-
-                // Set hidden input fields with total expenditure and remaining balance
-                document.getElementById("user-total-expenditures").value = totalExpenditure;
-                document.getElementById("user-remaining-balance").value = remainingBalance;
-
-                // Save the data to the server
-                saveSavingData();
             }
         }
     } else {
@@ -346,29 +338,85 @@ window.onload = function() {
         askForMonth();
     }, 1200);
 };
-
 // Function to save saving data to the server
-function saveSavingData() {
-    var totalExpenditures = document.getElementById("user-total-expenditures").value;
-    var remainingBalance = document.getElementById("user-remaining-balance").value;
-
-    // Send the data to the server using AJAX
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "save_saving_data.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            console.log(xhr.responseText);
+function saveSavingData(savingData) {
+    fetch('/save_saving_data', {
+        method: 'POST',
+        body: JSON.stringify({ saving_data: savingData }),
+        headers: {
+            'Content-Type': 'application/json'
         }
-    };
-    var data = "total_expenditures=" + totalExpenditures + "&remaining_balance=" + remainingBalance;
-    xhr.send(data);
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Saving data saved successfully');
+        } else {
+            console.error('Failed to save saving data');
+        }
+    })  
+    .catch(error => {   
+        console.error('Error:', error);
+    });
 }
+
+// Function to calculate and save saving data
+function saveSavingData() {
+    // Calculate saving data...
+    var savingData = '...'; // Example saving data
+    addMessage("Your This Month Saving is : ₹" + remainingBalance, "bot");
+    saveSavingData(savingData); // Save saving data to the server
+}
+
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Create a MySQL connection pool
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: 'localhost',
+    user: 'root',
+    password: 'Ketan@2005',
+    database: 'finzz' // Change the database name to finzz
+});
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Route to save saving data
+app.post('/save_saving_data', (req, res) => {
+    const savingData = req.body;
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error getting MySQL connection:', err);
+            return res.status(500).json({ error: 'Failed to save data' });
+        }
+        
+        // Insert saving data into the database
+        connection.query('INSERT INTO savings SET ?', savingData, (err, result) => {
+            connection.release(); // Release the connection
+            if (err) {
+                console.error('Error saving data to MySQL:', err);
+                return res.status(500).json({ error: 'Failed to save data' });
+            }
+            res.status(200).json({ message: 'Saving data saved successfully' });
+        });
+    });
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(Server is running on port ${PORT});
+});
+
+
+
+
 </script>
-
-<!-- Hidden input fields to store total expenditures and remaining balance -->
-<input type="hidden" id="user-total-expenditures">
-<input type="hidden" id="user-remaining-balance">
-
 </body>
 </html>
